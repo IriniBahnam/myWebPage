@@ -29,7 +29,9 @@ http.createServer (
         }
 
         result.write('<html>');
-        result.write('<head></head>');
+        result.write('  <head>');
+        result.write('    <title>Welcome to Irini\'s Webpage</title>');
+        result.write('  </head>');
         result.write('<body>hello from generated html<br/>');
         result.write(new Date().toISOString());
         result.write('<br/>')
