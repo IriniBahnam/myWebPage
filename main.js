@@ -13,6 +13,7 @@ http.createServer (
         var pathName = urlObject.pathname;
         var query = urlObject.query;
         var port = urlObject.port;
+        var title = urlObject.title;
 
         console.log(`url     : ${request.url}`);
         console.log(`protocol: ${protocol}`);
@@ -21,6 +22,7 @@ http.createServer (
         console.log(`path    : ${path}`);
         console.log(`pathName: ${pathName}`);
         console.log(`port    : ${port}`);
+    
 
         for (const property in query) {
             console.log(`${property}: ${query[property]}`);
@@ -47,4 +49,5 @@ http.createServer (
 
 // listen on port 8080
 }).listen(8080);
+
     
