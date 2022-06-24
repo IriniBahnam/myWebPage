@@ -1,9 +1,55 @@
 var http = require ('http');
-var url = require ('url');
+var url = require('url');
+
+// tells javascript to go read the fs code because i'm about
+// to use stuff from there...
+var fs = require('fs');
+
+function onDataReady(err, data) {
+    if (err) {
+        console.error(err);
+        return;
+    }
+    console.log('---- inside onDataReady...')
+    console.log(data);
+    console.log('---- leaving onDataReady...')
+}
 
 // creating a http server program that will run on the server computer
+function sayHello() {
+    console.log("hello!!!!");
+}
 
-http.createServer (
+function setResult(fileName, result){
+
+    // start using fs code...
+    fs.readFile(fileName, 'utf8',
+        // err: will hold the error in case a problem occurs while reading the file.
+        // data: will hold the contents of the file if the read is successful.
+        (err, data) => {
+            if (err) {
+                // let the developer know about the problem...
+                console.error(err);
+
+                // let the end user know about the problem...
+                result.write("<html><body>Ops! Something bad happened!<br/>Contact customer support to fix it!<br/>" + err.message + "</body></html>");
+                result.end();
+
+                return;
+            }
+            console.log('---- inside onDataReady...')
+            console.log(data);
+
+            console.log('---- writing file contents to result...')
+            result.write(data);
+            result.end();
+            console.log('---- leaving onDataReady...')
+        }
+    );
+}
+
+
+http.createServer(
     function (request, result) {
         var urlObject = url.parse(request.url, true);
         var protocol = urlObject.protocol;
@@ -13,6 +59,8 @@ http.createServer (
         var pathName = urlObject.pathname;
         var query = urlObject.query;
         var port = urlObject.port;
+
+        sayHello();
 
         console.log(`url     : ${request.url}`);
         console.log(`protocol: ${protocol}`);
@@ -26,6 +74,7 @@ http.createServer (
             console.log(`${property}: ${query[property]}`);
         }
 
+        /*
         result.write('<html>');
         result.write('  <head>');
         result.write('    <title>Welcome to Irini\'s Webpage</title>');
@@ -33,20 +82,47 @@ http.createServer (
         result.write('<body>hello from generated html<br/>');
         result.write(new Date().toISOString());
         result.write('<br/>')
+        */
+        if (pathName == "/main") {
 
-        if (pathName == "/irini") {
-            result.write('hi irini');
+            // start using fs code...
+            fs.readFile('main.html', 'utf8',
+                // err: will hold the error in case a problem occurs while reading the file.
+                // data: will hold the contents of the file if the read is successful.
+                (err, data) => {
+                    if (err) {
+                        // let the developer know about the problem...
+                        console.error(err);
+
+                        // let the end user know about the problem...
+                        result.write("<html><body>Ops! Something bad happened!<br/>Contact customer support to fix it!<br/>" + err.message + "</body></html>");
+                        result.end();
+
+                        return;
+                    }
+                    console.log('---- inside onDataReady...');
+
+                    data = data.replace(/TIME_VARIABLE/i, new Date().toISOString());
+
+                    console.log(data);
+
+                    console.log('---- writing file contents to result...')
+                    result.write(data);
+                    result.end();
+                    console.log('---- leaving onDataReady...')
+                }
+
+            );
         }
-        else if (pathName == "/george") {
-            result.write('hi george');
+        else if (pathName == "/about") {
+            setResult('about.html', result);
         }
         else {
-            result.write('I don\'t know you');
+            setResult('error.html', result);
         }
 
-        result.write('</body></html>');
-        result.end();
 
-// listen on port 8080
-}).listen(8080);
+    // listen on port 8080
+    }
+).listen(8080);
     
