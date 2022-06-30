@@ -5,20 +5,7 @@ var url = require('url');
 // to use stuff from there...
 var fs = require('fs');
 
-function onDataReady(err, data) {
-    if (err) {
-        console.error(err);
-        return;
-    }
-    console.log(data);
-   
-}
-
 // creating a http server program that will run on the server computer
-function sayHello() {
-    console.log("hello!!!!");
-}
-
 function setResult(fileName, result){
 
     // start using fs code...
@@ -47,10 +34,15 @@ function setResult(fileName, result){
     );
 }
 
-
 http.createServer(
     function (request, result) {
+
+
+        // = means ASSIGN the value of what's on the right to 
+        // the variable on the left...
+        // = is called the assignment operator
         var urlObject = url.parse(request.url, true);
+
         var protocol = urlObject.protocol;
         var host = urlObject.host;
         var hostName = urlObject.hostname;
@@ -60,8 +52,7 @@ http.createServer(
         var port = urlObject.port;
         var title = urlObject.title;
 
-        sayHello();
-
+        console.log(`----- new request just came in.. printing... -----`);
         console.log(`url     : ${request.url}`);
         console.log(`protocol: ${protocol}`);
         console.log(`host    : ${host}`);
@@ -75,16 +66,11 @@ http.createServer(
         for (const property in query) {
             console.log(`${property}: ${query[property]}`);
         }
+        console.log(`----- end of request  -----`);
 
-        /*
-        result.write('<html>');
-        result.write('  <head>');
-        result.write('    <title>Welcome to Irini\'s Webpage</title>');
-        result.write('  </head>');
-        result.write('<body>hello from generated html<br/>');
-        result.write(new Date().toISOString());
-        result.write('<br/>')
-        */
+        // == means CHECK if the value of what's on the left is the same
+        // as the value of what's on the right...
+        // == is called the equality operatory
         if (pathName == "/main") {
 
             // start using fs code...
@@ -124,6 +110,9 @@ http.createServer(
         }
         else if (pathName == "/projects") {
             setResult('projects.html', result);
+        }
+        else if (pathName == "/") {
+            setResult('main.html', result);
         }
         else {
             setResult('error.html', result);
